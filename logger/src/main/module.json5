@@ -1,0 +1,9 @@
+{
+  "module": {
+    "name": "logger",
+    "type": "har",
+    "deviceTypes": [
+      "default"
+    ]
+  }
+}
