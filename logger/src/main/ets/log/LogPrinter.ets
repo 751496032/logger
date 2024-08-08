@@ -9,6 +9,7 @@ import { IPrinter } from './IPrinter';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { Logger } from './Logger';
 import { LogConfig } from './LogConfig';
+import { ArrayList } from '@kit.ArkTS';
 
 export class LogPrinter implements IPrinter {
 
@@ -91,6 +92,7 @@ export class LogPrinter implements IPrinter {
         showStack: true,
         fullStack: false,
         showDivider: true,
+        debug:true,
         tag: this.TAG
       } as LogConfig)
     }
@@ -102,12 +104,24 @@ export class LogPrinter implements IPrinter {
     })
   }
 
+  private getKV(map: Map<ObjectOrNull, ObjectOrNull>): string {
+    if (map.size <= 0) {
+      return ''
+    }
+    let str = ''
+    map.forEach((value, key) =>{
+      str += `${JSON.stringify(key)}=${JSON.stringify(value)}, `
+    })
+    return str.replace(/"/g, '').slice(0, -2)
+  }
 
   private getMessages(params: string[], isJson: boolean = false, ...args: ObjectOrNull[]): string[] {
     args.forEach((v) => {
       if (isObject(v) || isArray(v) || isNumber(v) || isBoolean(v)) {
         if (isJson && isObject(v)) {
           params.push(JSON.stringify(v, null, 2))
+        } else if (v instanceof Map) {
+          params.push(this.getKV(v))
         } else {
           params.push(JSON.stringify(v))
         }
