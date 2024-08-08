@@ -11,18 +11,18 @@ struct Index {
       Button('打印日志').onClick((event: ClickEvent) => {
         const msg = 'Hello World';
         const msg2 = 'Hello Logger';
-        // Logger.i(msg)
+        Logger.i(msg)
         //
         const messages = [msg, msg2]
-        // Logger.d(messages)
+        Logger.d(messages)
         //
         const user = new UserInfo('HZWei', 18)
-        // Logger.w(user)
+        Logger.w(user)
         Logger.e(user, messages, 12, true)
 
         Logger.json(user)
 
-        const map = new Map<string,Object>()
+        const map = new Map<string, Object>()
         map.set('name', 'HZWei')
         map.set('age', '18')
         map.set('user', new UserInfo('HZWei', 20))
