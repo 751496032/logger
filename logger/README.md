@@ -1,9 +1,9 @@
 ## 介绍
 
-Logger是一款简单、漂亮、实用的鸿蒙应用日志框架，是基于鸿蒙系统提供的hiLog日志库封装的，主要特性如下：
+Logger是一款简单、漂亮、实用的鸿蒙应用日志框架，是基于鸿蒙系统提供的hiLog日志库封装的，主要特性：
 
 - 支持堆栈信息输出；
-- 支持众多数据格式输出，如基本数据类型、对象、Map、List、JSON等格式，可以一次性输出多个格式的数据；
+- 支持众多数据格式输出，如基本数据类型、对象、Map、List、JSON等格式，可以一次性打印多个数据格式的数据；
 - 支持自定义TAG；
 - 支持在日志定位跳转到源码；
 - 支持自定义日志行为，比如日志上报、缓存本地等。
@@ -166,9 +166,11 @@ LogPrinter负责管理日志适配器(ILogAdapter)和分发日志信息，Logger
 ![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/51d905156f9248ab96120f6f90ac27d9.png)
 
 
+## 源码
 
+- https://gitee.com/common-apps/logger
 
-## 参考
+**## 参考
 
 
 - https://github.com/orhanobut/logger
