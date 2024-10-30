@@ -31,7 +31,7 @@ export class HilogAdapter implements ILogAdapter{
   }
 
   log(level: hilog.LogLevel, tag: string, msg: string, ...args: ObjectOrNull[]): void {
-    msg = this.formatMsg(msg, this.SINGLE_DIVIDER.length + 20)
+    // msg = this.formatMsg(msg, this.SINGLE_DIVIDER.length + 20)
     let newMsg =  this.config.showDivider ? this.TOP_BORDER + '\n' : ''
     if (this.config.showStack) {
       const stackMsg = this.config.fullStack ? new Error().stack : (new Error().stack?.trim()?.split('\n').slice(-2).join('\n')) + '\n'
