@@ -9,60 +9,95 @@ import { IPrinter } from './IPrinter';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { Logger } from './Logger';
 import { LogConfig } from './LogConfig';
-import { ArrayList } from '@kit.ArkTS';
+import { ObjectUtil } from '../common/ObjectUtil';
+import { HilogAdapter } from './HilogAdapter';
 
 export class LogPrinter implements IPrinter {
 
-  private readonly TAG: string = 'Logger'
+  static readonly TAG: string = 'Logger'
   private adapters = new Array<ILogAdapter>()
+  static globalConfig : LogConfig = {
+    domain: 0x6666,
+    showStack: true,
+    isPrintFullStack: false,
+    showDivider: true,
+    debug: true,
+    tag: LogPrinter.TAG
+  }
 
   d(...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.DEBUG, this.TAG, false, ...args)
+    this.log(hilog.LogLevel.DEBUG, LogPrinter.globalConfig, false, ...args)
   }
 
   e(...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.ERROR, this.TAG, false, ...args)
+    this.log(hilog.LogLevel.ERROR, LogPrinter.globalConfig, false, ...args)
   }
 
   i(...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.INFO, this.TAG, false, ...args)
+    this.log(hilog.LogLevel.INFO, LogPrinter.globalConfig, false, ...args)
   }
 
   w(...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.WARN, this.TAG, false, ...args)
+    this.log(hilog.LogLevel.WARN, LogPrinter.globalConfig, false, ...args)
   }
 
   f(...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.FATAL, this.TAG, false, ...args)
+    this.log(hilog.LogLevel.FATAL, LogPrinter.globalConfig, false, ...args)
   }
 
   json(args: string | object): void {
-    this.log(hilog.LogLevel.DEBUG, this.TAG, true, args)
+    this.log(hilog.LogLevel.DEBUG, LogPrinter.globalConfig, true, args)
   }
 
   dt(tag: string, ...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.DEBUG, tag, false, ...args)
+    this.log(hilog.LogLevel.DEBUG, this.getLogConfigByTag(tag), false, ...args)
   }
 
   et(tag: string, ...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.ERROR, tag, false, ...args)
+    this.log(hilog.LogLevel.ERROR, this.getLogConfigByTag(tag), false, ...args)
   }
 
   it(tag: string, ...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.INFO, tag, false, ...args)
+    this.log(hilog.LogLevel.INFO, this.getLogConfigByTag(tag), false, ...args)
   }
 
   wt(tag: string, ...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.WARN, tag, false, ...args)
+    this.log(hilog.LogLevel.WARN, this.getLogConfigByTag(tag), false, ...args)
   }
 
   ft(tag: string, ...args: ObjectOrNull[]): void {
-    this.log(hilog.LogLevel.FATAL, tag, false, ...args)
+    this.log(hilog.LogLevel.FATAL, this.getLogConfigByTag(tag), false, ...args)
   }
 
   json2(tag: string, args: string | object): void {
-    this.log(hilog.LogLevel.DEBUG, tag, true, args)
+    this.log(hilog.LogLevel.DEBUG, this.getLogConfigByTag(tag), true, args)
   }
+
+
+  debug(config: LogConfig, ...args: ObjectOrNull[]): void {
+    this.log(hilog.LogLevel.DEBUG, config, false, ...args)
+  }
+
+  error(config: LogConfig, ...args: ObjectOrNull[]): void {
+    this.log(hilog.LogLevel.ERROR, config, false, ...args)
+  }
+
+  info(config: LogConfig, ...args: ObjectOrNull[]): void {
+    this.log(hilog.LogLevel.INFO, config, false, ...args)
+  }
+
+  warn(config: LogConfig, ...args: ObjectOrNull[]): void {
+    this.log(hilog.LogLevel.WARN, config, false, ...args)
+  }
+
+  fatal(config: LogConfig, ...args: ObjectOrNull[]): void {
+    this.log(hilog.LogLevel.FATAL, config, false, ...args)
+  }
+
+  json3(config: LogConfig, args: string | object): void {
+    this.log(hilog.LogLevel.FATAL, config, true, args)
+  }
+
 
   public addLogAdapter(adapter: ILogAdapter) {
     this.adapters.push(adapter)
@@ -81,8 +116,17 @@ export class LogPrinter implements IPrinter {
     }
   }
 
+  private getLogConfigByTag(tag: string): LogConfig {
+    const config = ObjectUtil.shallowCopy(LogPrinter.globalConfig) as LogConfig
+    config.tag = tag
+    return config
+  }
 
-  private log(level: hilog.LogLevel, tag: string, isJson: boolean, ...args: ObjectOrNull[]) {
+
+  private log(level: hilog.LogLevel, config: LogConfig, isJson: boolean, ...args: ObjectOrNull[]) {
+    let tag = config.tag
+    tag = tag ? tag : LogPrinter.TAG
+    config.tag = tag
     if (args.length === 0) {
       return
     }
@@ -90,16 +134,20 @@ export class LogPrinter implements IPrinter {
       Logger.init({
         domain: 0x6666,
         showStack: true,
-        fullStack: false,
+        isPrintFullStack: false,
         showDivider: true,
-        debug:true,
-        tag: this.TAG
+        debug: true,
+        tag: LogPrinter.TAG
       } as LogConfig)
     }
     const messages = this.getMessages([], isJson, ...args)
     this.adapters.forEach((adapter) => {
-      if (adapter.isLoggable(level, tag)) {
-        adapter.log(level, tag, messages.join(' '), ...args)
+      if (adapter.isLoggable(level, tag!)) {
+        if (adapter instanceof HilogAdapter) {
+          adapter.logByCustomConfig(level, config, messages.join(' '), ...args)
+        } else {
+          adapter.log(level, tag!, messages.join(' '), ...args)
+        }
       }
     })
   }

@@ -1,5 +1,7 @@
 import { LogConfig, Logger } from 'logger';
 import { ArrayList } from '@kit.ArkTS';
+import { DiskLogAdapter } from '../log/DiskLogAdapter';
+import { LogConfigs } from '../log/LogConfigs';
 
 @Entry
 @Component
@@ -8,6 +10,14 @@ struct Index {
 
   build() {
     Column({space:10}) {
+
+      Button("初始化").onClick((event: ClickEvent) => {
+        Logger.init(LogConfigs.globalConfig)
+        // 可选
+        Logger.addLogAdapter(new DiskLogAdapter())
+
+      })
+
       Button('打印日志').onClick((event: ClickEvent) => {
         const msg = 'Hello World';
         const msg2 = 'Hello Logger';
@@ -35,17 +45,16 @@ struct Index {
 
         Logger.wt('hzw',20)
 
-        // Logger.init({
-        //   domain: 0x6666,
-        //   showStack: false,
-        //   fullStack: false,
-        //   showDivider: true,
-        //   debug:true,
-        //   tag: 'xml'
-        // } as LogConfig)
+
         // Logger.w('Hello World')
 
-
+      })
+      Button("单个日志自定义配置").onClick((event: ClickEvent) => {
+        const map = new Map<string, Object>()
+        map.set('name', 'HZWei')
+        map.set('age', '18')
+        map.set('user', new UserInfo('HZWei', 20))
+        Logger.fatal(LogConfigs.hzwConfig, map)
       })
     }
     .height('100%')

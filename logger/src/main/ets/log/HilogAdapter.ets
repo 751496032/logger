@@ -10,7 +10,7 @@ import { ObjectOrNull } from '../common/Types';
 
 export class HilogAdapter implements ILogAdapter{
   private readonly format: string = '%{public}s, '
-  private config: LogConfig
+  private globalConfig: LogConfig
   private TOP_LEFT_CORNER = '┌';
   private BOTTOM_LEFT_CORNER = '└';
   private MIDDLE_CORNER = '├';
@@ -23,23 +23,28 @@ export class HilogAdapter implements ILogAdapter{
 
 
   constructor(config: LogConfig) {
-    this.config = config
+    this.globalConfig = config
   }
 
   isLoggable(level: hilog.LogLevel, tag: string): boolean {
-    return this.config.debug
+    return this.globalConfig.debug
   }
 
-  log(level: hilog.LogLevel, tag: string, msg: string, ...args: ObjectOrNull[]): void {
-    // msg = this.formatMsg(msg, this.SINGLE_DIVIDER.length + 20)
-    let newMsg =  this.config.showDivider ? this.TOP_BORDER + '\n' : ''
-    if (this.config.showStack) {
-      const stackMsg = this.config.fullStack ? new Error().stack : (new Error().stack?.trim()?.split('\n').slice(-2).join('\n')) + '\n'
+  logByCustomConfig(level: hilog.LogLevel, config: LogConfig, msg: string, ...args: ObjectOrNull[]): void {
+    const domain = config ? config.domain :this.globalConfig.domain > 0 ? this.globalConfig.domain : 0x0066
+    const showDivider = config ? config.showDivider : this.globalConfig.showDivider
+    const showStack = config ? config.showStack : this.globalConfig.showStack
+    const isPrintFullStack = config ? config.isPrintFullStack : this.globalConfig.isPrintFullStack
+    const tag = config? config.tag : this.globalConfig.tag
+
+    let newMsg =  showDivider ? this.TOP_BORDER + '\n' : ''
+    if (showStack) {
+      const stackMsg = isPrintFullStack ? new Error().stack : (new Error().stack?.trim()?.split('\n').slice(-2).join('\n')) + '\n'
       if (stackMsg) {
         let stackLines = stackMsg.split('\n')
         stackLines.forEach((line, index) => {
           if (index !== stackLines.length - 1) {
-            if (this.config.showDivider) {
+            if (showDivider) {
               newMsg += this.HORIZONTAL_LINE + ' ' +  line.trim() + '\n'
             }else {
               newMsg +=  ' ' +  line.trim() + '\n'
@@ -50,24 +55,24 @@ export class HilogAdapter implements ILogAdapter{
 
         })
       }
-      if (this.config.showDivider) {
+      if (showDivider) {
         newMsg += this.MIDDLE_BORDER + '\n'
       }
     }
 
     msg.split('\n').forEach((line, index) => {
-      if (this.config.showDivider) {
+      if (showDivider) {
         newMsg += this.HORIZONTAL_LINE + ' ' + line + '\n'
       }else {
         newMsg += ' ' + line + '\n'
       }
     })
-    if (this.config.showDivider) {
+    if (showDivider) {
       newMsg += this.BOTTOM_BORDER + '\n'
     }
     msg = newMsg
 
-    const domain = this.config.domain > 0 ? this.config.domain : 0x0066
+
     const format = '%{public}s'
     switch (level){
       case hilog.LogLevel.DEBUG:
@@ -86,6 +91,18 @@ export class HilogAdapter implements ILogAdapter{
         hilog.fatal(domain, tag, format, msg)
         break
     }
+  }
+
+  /**
+   * @deprecated
+   * @param level
+   * @param tag
+   * @param msg
+   * @param args
+   */
+  log(level: hilog.LogLevel, tag: string, msg: string, ...args: ObjectOrNull[]): void {
+    // msg = this.formatMsg(msg, this.SINGLE_DIVIDER.length + 20)
+
   }
 
   /**

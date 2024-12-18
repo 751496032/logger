@@ -21,6 +21,7 @@ export class Logger {
    * @param config
    */
   static init(config: LogConfig) {
+    LogPrinter.globalConfig = config
     Logger.addLogAdapter(new HilogAdapter(config))
   }
 
@@ -81,8 +82,33 @@ export class Logger {
     Logger.printer.ft(tag, ...args)
   }
 
-  public static jsont(tag: string, args: string | object): void {
+  public static json2(tag: string, args: string | object): void {
     Logger.printer.json2(tag, args)
+  }
+
+
+  public static info(config: LogConfig, ...args: ObjectOrNull[]) {
+    Logger.printer.info(config, ...args)
+  }
+
+  public static debug(config: LogConfig, ...args: ObjectOrNull[]) {
+    Logger.printer.debug(config, ...args)
+  }
+
+  public static warn(config: LogConfig, ...args: ObjectOrNull[]) {
+    Logger.printer.warn(config, ...args)
+  }
+
+  public static error(config: LogConfig, ...args: ObjectOrNull[]) {
+    Logger.printer.error(config, ...args)
+  }
+
+  public static fatal(config: LogConfig, ...args: ObjectOrNull[]) {
+    Logger.printer.fatal(config, ...args)
+  }
+
+  public static json3(config: LogConfig, args: string | object): void {
+    Logger.printer.json3(config, args)
   }
 
 

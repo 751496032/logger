@@ -4,6 +4,7 @@
  * @desc:
  */
 import { ObjectOrNull } from '../common/Types'
+import { LogConfig } from './LogConfig'
 
 export interface IPrinter {
 
@@ -30,5 +31,17 @@ export interface IPrinter {
   ft(tag: string, ...args: ObjectOrNull[]): void
 
   json2(tag: string, args: object | string): void
+
+  debug(config: LogConfig, ...args: ObjectOrNull[]): void
+
+  error(config: LogConfig, ...args: ObjectOrNull[]): void
+
+  info(config: LogConfig, ...args: ObjectOrNull[]): void
+
+  warn(config: LogConfig, ...args: ObjectOrNull[]): void
+
+  fatal(config: LogConfig, ...args: ObjectOrNull[]): void
+
+  json3(config: LogConfig, args: object | string): void
 
 }

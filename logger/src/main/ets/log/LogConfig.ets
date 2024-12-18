@@ -5,10 +5,10 @@
  */
 
 export interface LogConfig {
-  readonly domain: number
-  readonly tag?: string
-  readonly debug: boolean
-  readonly  fullStack?: boolean
-  readonly showStack?: boolean
-  readonly showDivider?: boolean,
+  domain: number
+  tag?: string
+  debug: boolean
+  isPrintFullStack?: boolean
+  showStack?: boolean
+  showDivider?: boolean,
 }
