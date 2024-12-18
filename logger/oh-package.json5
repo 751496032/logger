@@ -1,6 +1,6 @@
 {
   "name": "@hzw/logger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Logger是一款简单、漂亮、实用的鸿蒙应用日志框架，可自定义日志行为，比如日志缓存、上报等",
   "main": "Index.ets",
   "author": "HZWei",

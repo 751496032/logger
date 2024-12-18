@@ -150,10 +150,9 @@ export class LogPrinter implements IPrinter {
     const messages = this.getMessages([], isJson, ...args)
     this.adapters.forEach((adapter) => {
       if (adapter.isLoggable(level, tag!)) {
+        adapter.log(level, tag!, messages.join(' '), ...args)
         if (adapter instanceof HilogAdapter) {
           adapter.logByCustomConfig(level, config, messages.join(' '), ...args)
-        } else {
-          adapter.log(level, tag!, messages.join(' '), ...args)
         }
       }
     })
