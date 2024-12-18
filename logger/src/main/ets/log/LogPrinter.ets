@@ -100,7 +100,14 @@ export class LogPrinter implements IPrinter {
 
 
   public addLogAdapter(adapter: ILogAdapter) {
-    this.adapters.push(adapter)
+    if (!this.adapters.includes(adapter)){
+      const targetClass  = this.adapters.find((item) => item.constructor.name == adapter.constructor.name)
+      if (!targetClass) {
+        this.adapters.push(adapter)
+      }
+
+    }
+
   }
 
   public removeLogAdapter(adapter: ILogAdapter) {
