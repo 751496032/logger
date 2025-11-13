@@ -51,6 +51,7 @@ Logger.init({
   showDivider: true,
   debug:true,
   tag: 'xml'
+  cacheLineNum: 50,
 } as LogConfig)
 ```
 
@@ -62,6 +63,7 @@ Logger.init({
 - fullStack：是否输出全部堆栈信息，建议设为false，日志会更简洁
 - showStack：是否显示堆栈信息
 - showDivider：是否显示分割线
+- cacheLineNum：针对行数较多的日志，建议采用「分批循环输出」策略——每次输出指定行数，避免一次性打印全部内容导致截断/不全。例如设置每批输出50行，对于长日志，则会按「每50行一批」的节奏持续输出，直至所有内容打印完毕。
 
 ```
 export interface LogConfig {

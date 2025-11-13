@@ -66,13 +66,21 @@ export class HilogAdapter implements ILogAdapter{
       }else {
         newMsg += ' ' + line + '\n'
       }
+      if (this.globalConfig.cacheLineNum) {
+        if (index > 0 && (index + 1) % (this.globalConfig.cacheLineNum) === 0) {
+          this.realLog(level, tag, newMsg, domain, ...args)
+          newMsg = ''
+        }
+      }
     })
-    if (showDivider) {
+    if (this.globalConfig.showDivider) {
       newMsg += this.BOTTOM_BORDER + '\n'
     }
     msg = newMsg
+    this.realLog(level, tag, msg, domain, ...args)
+  }
 
-
+  realLog(level: hilog.LogLevel, tag: string | undefined, msg: string, domain: number, ...args: ObjectOrNull[]) {
     const format = '%{public}s'
     switch (level){
       case hilog.LogLevel.DEBUG:
