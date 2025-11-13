@@ -8,6 +8,8 @@ import { LogPrinter } from './LogPrinter'
 import { HilogAdapter } from './HilogAdapter'
 import { ILogAdapter } from './ILogAdapter'
 import { ObjectOrNull } from '../common/Types'
+import { LogPrinterProxy } from './LogPrinterProxy'
+import { ObjectUtil } from '../common/ObjectUtil'
 
 
 export class Logger {
@@ -19,9 +21,20 @@ export class Logger {
   /**
    * 初始化日志配置
    * @param config
+   * @deprecated 请使用initialize方法
    */
   static init(config: LogConfig) {
     LogPrinter.globalConfig = config
+    Logger.addLogAdapter(new HilogAdapter(config))
+  }
+
+  /**
+   * 初始化
+   * @param adapter
+   */
+  static initialize(cb: (config: LogConfig) => void) {
+    const config = {} as LogConfig
+    cb(config)
     Logger.addLogAdapter(new HilogAdapter(config))
   }
 
@@ -112,4 +125,24 @@ export class Logger {
   }
 
 
+  /**
+   * 自定义tag日志
+   * @param tag
+   * @param cb
+   * @returns
+   */
+  static getLogger(tag: string, cb?: (config: LogConfig) => void) {
+    let config = ObjectUtil.deepCopy(LogPrinter.globalConfig) as LogConfig
+    cb?.(config)
+    config.tag = tag
+    const proxy = new LogPrinterProxy(Logger.printer, config)
+    return proxy
+  }
+
 }
+
+export function getLogger(tag: string, cb?: (config: LogConfig) => void): LogPrinterProxy {
+  return Logger.getLogger(tag, cb)
+}
+
+

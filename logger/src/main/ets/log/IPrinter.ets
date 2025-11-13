@@ -6,19 +6,7 @@
 import { ObjectOrNull } from '../common/Types'
 import { LogConfig } from './LogConfig'
 
-export interface IPrinter {
-
-  d(...args: ObjectOrNull[]): void
-
-  e(...args: ObjectOrNull[]): void
-
-  i(...args: ObjectOrNull[]): void
-
-  w(...args: ObjectOrNull[]): void
-
-  f(...args: ObjectOrNull[]): void
-
-  json(args: object | string): void
+export interface IPrinter extends IBasePrinter {
 
   dt(tag: string, ...args: ObjectOrNull[]): void
 
@@ -42,6 +30,22 @@ export interface IPrinter {
 
   fatal(config: LogConfig, ...args: ObjectOrNull[]): void
 
-  json3(config: LogConfig, args: object | string): void
+  json3?(config: LogConfig, args: object | string): void
+
+}
+
+export interface IBasePrinter {
+
+  d(...args: ObjectOrNull[]): void
+
+  e(...args: ObjectOrNull[]): void
+
+  i(...args: ObjectOrNull[]): void
+
+  w(...args: ObjectOrNull[]): void
+
+  f(...args: ObjectOrNull[]): void
+
+  json(args: object | string): void
 
 }

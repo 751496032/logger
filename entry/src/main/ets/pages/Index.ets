@@ -1,8 +1,12 @@
-import { LogConfig, Logger } from 'logger';
+import { getLogger, LogConfig, Logger } from 'logger';
 import { ArrayList } from '@kit.ArkTS';
 import { DiskLogAdapter } from '../log/DiskLogAdapter';
 import { LogConfigs } from '../log/LogConfigs';
 
+
+const logger = getLogger("hzw",(config)=>{
+  config.showDivider = false
+})
 @Entry
 @Component
 struct Index {
@@ -55,6 +59,15 @@ struct Index {
         map.set('age', '18')
         map.set('user', new UserInfo('HZWei', 20))
         Logger.fatal(LogConfigs.hzwConfig, map)
+      })
+
+
+      Button("单个日志自定义配置 - getLogger").onClick((event: ClickEvent) => {
+        const map = new Map<string, Object>()
+        map.set('name', 'HZWei')
+        map.set('age', '20')
+        map.set('user', new UserInfo('HZWei', 25))
+        logger.f(map)
       })
     }
     .height('100%')

@@ -1,4 +1,5 @@
 import { ObjectOrNull } from "./Types";
+import util from "@ohos.util";
 
 /**
  * @author: HZWei
@@ -14,19 +15,7 @@ export class ObjectUtil {
    * @returns
    */
   static hashCode(obj: object): number {
-    let hash = 0
-    let i = 0
-    let chr: number = 0;
-    let str = JSON.stringify(obj)
-    if (str.length === 0) {
-      return hash;
-    }
-    for (i = 0; i < str.length; i++) {
-      chr = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + chr;
-      hash |= 0; // 将 hash 转换为 32 位整数
-    }
-    return hash
+    return util.getHash(obj)
   }
 
   /**
@@ -100,7 +89,7 @@ export class ObjectUtil {
    * @param obj
    * @returns
    */
-  static  shallowCopy(obj: object): object {
+  static shallowCopy(obj: object): object {
     let newObj: Record<string, Object> = {};
     for (let key of Object.keys(obj)) {
       newObj[key] = obj[key];

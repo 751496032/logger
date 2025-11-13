@@ -30,7 +30,7 @@ export class HilogAdapter implements ILogAdapter{
     return this.globalConfig.debug
   }
 
-  logByCustomConfig(level: hilog.LogLevel, config: LogConfig, msg: string, ...args: ObjectOrNull[]): void {
+  logByCustomConfig(level: hilog.LogLevel, config: LogConfig | undefined, msg: string, ...args: ObjectOrNull[]): void {
     const domain = config ? config.domain :this.globalConfig.domain > 0 ? this.globalConfig.domain : 0x0066
     const showDivider = config ? config.showDivider : this.globalConfig.showDivider
     const showStack = config ? config.showStack : this.globalConfig.showStack
