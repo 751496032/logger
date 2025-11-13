@@ -39,6 +39,7 @@ export class HilogAdapter implements ILogAdapter{
     const showStack = config ? config.showStack : this.globalConfig.showStack
     const isPrintFullStack = config ? config.isPrintFullStack : this.globalConfig.isPrintFullStack
     const tag = config? config.tag : this.globalConfig.tag
+    const cacheLineNum = config ? config.cacheLineNum : this.globalConfig.cacheLineNum
 
     let newMsg =  showDivider ? this.TOP_BORDER + '\n' : ''
     if (showStack) {
@@ -69,14 +70,14 @@ export class HilogAdapter implements ILogAdapter{
       }else {
         newMsg += ' ' + line + '\n'
       }
-      if (config.cacheLineNum) {
-        if (index > 0 && (index + 1) % (config.cacheLineNum) === 0) {
+      if (cacheLineNum) {
+        if (index > 0 && (index + 1) % (cacheLineNum) === 0) {
           this.realLog(level, tag, newMsg, domain, ...args)
           newMsg = ''
         }
       }
     })
-    if (config.showDivider) {
+    if (showDivider) {
       newMsg += this.BOTTOM_BORDER + '\n'
     }
     msg = newMsg
