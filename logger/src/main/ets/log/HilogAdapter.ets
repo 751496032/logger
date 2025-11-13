@@ -10,6 +10,9 @@ import { ObjectOrNull } from '../common/Types';
 
 export class HilogAdapter implements ILogAdapter{
   private readonly format: string = '%{public}s, '
+  /**
+   * @deprecated
+   */
   private globalConfig: LogConfig
   private TOP_LEFT_CORNER = '┌';
   private BOTTOM_LEFT_CORNER = '└';
@@ -66,14 +69,14 @@ export class HilogAdapter implements ILogAdapter{
       }else {
         newMsg += ' ' + line + '\n'
       }
-      if (this.globalConfig.cacheLineNum) {
-        if (index > 0 && (index + 1) % (this.globalConfig.cacheLineNum) === 0) {
+      if (config.cacheLineNum) {
+        if (index > 0 && (index + 1) % (config.cacheLineNum) === 0) {
           this.realLog(level, tag, newMsg, domain, ...args)
           newMsg = ''
         }
       }
     })
-    if (this.globalConfig.showDivider) {
+    if (config.showDivider) {
       newMsg += this.BOTTOM_BORDER + '\n'
     }
     msg = newMsg
