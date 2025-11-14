@@ -2,9 +2,9 @@
 
 Logger是一款简单、漂亮、实用的鸿蒙应用日志框架，基于鸿蒙系统提供的hiLog日志库封装的，主要特性如下：
 
-- 支持堆栈信息输出；
+- 支持堆栈信息输出，可配置忽略堆栈信息的关键字；
 - 支持众多数据格式输出，如基本数据类型、对象、Map、List、JSON等格式，可以一次性输出多个格式的数据；
-- 支持自定义TAG；
+- 支持全局与单个日志的自定义配置；
 - 支持在日志定位跳转到源码；
 - 支持自定义日志行为，比如日志上报、缓存本地等。
 - **支持超长日志输出**。
@@ -30,49 +30,48 @@ ohpm install ../libs/logger.har
 
 ### 初始化
 
-默认情况下是不需要手动初始化的，直接通过Logger类调用不同level的函数打印日志，如下：
+初始化全局配置
 
 ```
-const map = new Map<string, Object>()
-map.set('name', 'HZWei')
-map.set('age', '18')
-map.set('user', new UserInfo('HZWei', 20))
-Logger.f(map)
-```
+export default class EntryAbility extends UIAbility {
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
 
-**但还是建议你通过Logger的init()方法进行初始化配置，默认配置在release环境是不会关闭日志输出的。**
-
-可根据你自身需求来初始化配置信息，如下：
-
-```
-Logger.init({
-  domain: 0x6666,
-  showStack: true,
-  fullStack: false,
-  showDivider: true,
-  debug:true,
-  tag: 'xml'
-} as LogConfig)
+    Logger.initialize((config)=>{
+      config.showDivider = true
+      config.showStack = true
+      config.tag = 'ZLogger'
+      config.debug = true
+      config.isPrintFullStack = false
+      config.domain = 0x6688
+    })
+    // 可选
+    Logger.addLogAdapter(new DiskLogAdapter())
+  }
+ }
 ```
 
 配置参数：
 
-- domain: 作用域，是一个十六进制整数，范围从0x0到0xffff
-- tag：日志标记，默认是Logger
-- debug：控制是否打印日志，为true时会输出日志，反之则不会
-- fullStack：是否输出全部堆栈信息，建议设为false，日志会更简洁
-- showStack：是否显示堆栈信息
-- showDivider：是否显示分割线
+- `domain`: 作用域，是一个十六进制整数，范围从0x0到0xffff
+- `tag`：日志标记，默认是Logger
+- `debug`：控制是否打印日志，为true时会输出日志，反之则不会
+- `isPrintFullStack`：是否输出全部堆栈信息，建议设为false，日志会更简洁
+- `showStack`：是否显示堆栈信息
+- `showDivider`：是否显示分割线
+- `ignoreStackKeywords`：忽略的堆栈信息关键字
+
+
+
+如果需要自定义单个日志配置，可以通过`getLogger()`方法设置，**必须在初始化之后调用**。
 
 ```
-export interface LogConfig {
-  readonly domain: number 
-  readonly tag?: string
-  readonly debug: boolean
-  readonly  fullStack?: boolean
-  readonly showStack?: boolean
-  readonly showDivider?: boolean,
-}
+// 获取Logger代理实例
+const logger = getLogger("MainViewModel",(config) =>{
+  
+})
+// 输出日志：
+logger.i("Hello Logger")
 ```
 
 ### 打印各种数据格式

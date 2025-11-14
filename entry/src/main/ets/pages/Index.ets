@@ -14,15 +14,13 @@ struct Index {
   @Local message: string = 'Hello World';
   @Local viewModel: MainViewModel = new MainViewModel()
 
+  aboutToAppear(): void {
+
+  }
+
   build() {
     Column({space:10}) {
 
-      Button("初始化").onClick((event: ClickEvent) => {
-        Logger.init(LogConfigs.globalConfig)
-        // 可选
-        Logger.addLogAdapter(new DiskLogAdapter())
-
-      })
 
       Button('打印日志').onClick((event: ClickEvent) => {
         const msg = 'Hello World';

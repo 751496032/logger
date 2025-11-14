@@ -6,8 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-//    "@hzw/logger": "file:../logger",
-    "@hzw/logger": "file:../libs/logger.har"
+    "@hzw/logger": "file:../logger"
   },
   "devDependencies": {},
   "dynamicDependencies": {}

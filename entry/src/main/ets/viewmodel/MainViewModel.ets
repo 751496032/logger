@@ -5,7 +5,10 @@ import { getLogger } from "@hzw/logger"
  * @date: 2025/11/14
  * @desc:
  */
-const logger = getLogger("MainViewModel")
+const logger = getLogger("MainViewModel", (config) => {
+  config.ignoreStackKeywords = ["incrementInternal"]
+  config.domain = 0x1122
+})
 @ObservedV2
 export class MainViewModel {
   @Trace counter: number = 0
@@ -21,6 +24,5 @@ export class MainViewModel {
   private incrementInternal() {
     this.counter++
     logger.d("click incrementInternal", this.counter)
-    console.log(new Error().stack);
   }
 }

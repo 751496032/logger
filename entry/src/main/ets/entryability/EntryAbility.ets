@@ -1,10 +1,24 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import { Logger } from '@hzw/logger';
+import { DiskLogAdapter } from '../log/DiskLogAdapter';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
+
+    Logger.initialize((config)=>{
+      config.showDivider = true
+      config.showStack = true
+      config.tag = 'ZLogger'
+      config.debug = true
+      config.isPrintFullStack = false
+      config.domain = 0x6688
+      config.ignoreStackKeywords = ['anonymous']
+    })
+    // 可选
+    Logger.addLogAdapter(new DiskLogAdapter())
   }
 
   onDestroy(): void {

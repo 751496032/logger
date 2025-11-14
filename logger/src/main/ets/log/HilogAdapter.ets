@@ -33,12 +33,13 @@ export class HilogAdapter implements ILogAdapter{
     return this.globalConfig.debug
   }
 
-  private handleStackTrace(stack: string | undefined, isPrintFullStack: boolean = false): string {
+  private handleStackTrace(stack: string | undefined, isPrintFullStack: boolean = false,
+    ignoreStackKeywords: string[] = []): string {
     const stackTrace = stack?.trim() ?? ''
     let stackTraceMsg = ''
-    if (stackTrace) {
+    if (!isPrintFullStack) {
       stackTrace.split('\n').forEach((line, index) => {
-        if (!line.includes('logger/src/main/ets/log') && !line.includes('logger/src/main/ets/common')) {
+        if (!ignoreStackKeywords.some((keyword) => line.includes(keyword))) {
           stackTraceMsg += line.trim() + '\n'
         }
       })
@@ -53,11 +54,12 @@ export class HilogAdapter implements ILogAdapter{
     const isPrintFullStack = config ? config.isPrintFullStack : this.globalConfig.isPrintFullStack
     const tag = config? config.tag : this.globalConfig.tag
     const cacheLineNum = config ? config.cacheLineNum : this.globalConfig.cacheLineNum
+    const ignoreStackKeywords = config ? config.ignoreStackKeywords : this.globalConfig.ignoreStackKeywords
 
     let newMsg =  showDivider ? this.TOP_BORDER + '\n' : ''
     if (showStack) {
       // const stackMsg = isPrintFullStack ? new Error().stack : (new Error().stack?.trim()?.split('\n').slice(-2).join('\n')) + '\n'
-      const stackMsg = this.handleStackTrace(new Error().stack, isPrintFullStack)
+      const stackMsg = this.handleStackTrace(new Error().stack, isPrintFullStack, ignoreStackKeywords)
       if (stackMsg) {
         let stackLines = stackMsg.split('\n')
         stackLines.forEach((line, index) => {

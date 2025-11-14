@@ -13,16 +13,17 @@ import { ObjectUtil } from '../common/ObjectUtil';
 import { HilogAdapter } from './HilogAdapter';
 
 export class LogPrinter implements IPrinter {
-
   static readonly TAG: string = 'Logger'
   private adapters = new Array<ILogAdapter>()
-  static globalConfig : LogConfig = {
+  static ignoreStackTraceKeywords = ['logger/src/main/ets/common', 'logger/src/main/ets/log']
+  static globalConfig: LogConfig = {
     domain: 0x6666,
     showStack: true,
     isPrintFullStack: false,
     showDivider: true,
     debug: true,
-    tag: LogPrinter.TAG
+    tag: LogPrinter.TAG,
+    ignoreStackKeywords: LogPrinter.ignoreStackTraceKeywords,
   }
 
   d(...args: ObjectOrNull[]): void {
