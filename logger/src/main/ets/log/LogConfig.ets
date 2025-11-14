@@ -30,5 +30,8 @@ export function mergeConfig(config: LogConfig) {
   // 合并去重
   const mergedKeywords = new Set([...ignoreStackKeywords, ...printerKeywords])
   config.ignoreStackKeywords = Array.from(mergedKeywords);
+  if (config.cacheLineNum === 0) {
+    config.cacheLineNum = 50
+  }
   return config
 }
