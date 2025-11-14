@@ -1,16 +1,18 @@
-import { getLogger, LogConfig, Logger } from 'logger';
+import { getLogger, LogConfig, Logger } from "@hzw/logger";
 import { ArrayList } from '@kit.ArkTS';
 import { DiskLogAdapter } from '../log/DiskLogAdapter';
 import { LogConfigs } from '../log/LogConfigs';
+import { MainViewModel } from '../viewmodel/MainViewModel';
 
 
-const logger = getLogger("hzw",(config)=>{
+const logger = getLogger("hzw", (config) => {
   config.showDivider = false
 })
 @Entry
-@Component
+@ComponentV2
 struct Index {
-  @State message: string = 'Hello World';
+  @Local message: string = 'Hello World';
+  @Local viewModel: MainViewModel = new MainViewModel()
 
   build() {
     Column({space:10}) {
@@ -69,6 +71,11 @@ struct Index {
         map.set('user', new UserInfo('HZWei', 25))
         logger.f(map)
       })
+
+      Button('单个日志自定义配置 - getLogger').onClick((event: ClickEvent) => {
+         this.viewModel.increment()
+      })
+
     }
     .height('100%')
     .width('100%')

@@ -33,6 +33,19 @@ export class HilogAdapter implements ILogAdapter{
     return this.globalConfig.debug
   }
 
+  private handleStackTrace(stack: string | undefined, isPrintFullStack: boolean = false): string {
+    const stackTrace = stack?.trim() ?? ''
+    let stackTraceMsg = ''
+    if (stackTrace) {
+      stackTrace.split('\n').forEach((line, index) => {
+        if (!line.includes('logger/src/main/ets/log') && !line.includes('logger/src/main/ets/common')) {
+          stackTraceMsg += line.trim() + '\n'
+        }
+      })
+    }
+    return isPrintFullStack ? stackTrace : stackTraceMsg;
+  }
+
   logByCustomConfig(level: hilog.LogLevel, config: LogConfig | undefined, msg: string, ...args: ObjectOrNull[]): void {
     const domain = config ? config.domain :this.globalConfig.domain > 0 ? this.globalConfig.domain : 0x0066
     const showDivider = config ? config.showDivider : this.globalConfig.showDivider
@@ -43,7 +56,8 @@ export class HilogAdapter implements ILogAdapter{
 
     let newMsg =  showDivider ? this.TOP_BORDER + '\n' : ''
     if (showStack) {
-      const stackMsg = isPrintFullStack ? new Error().stack : (new Error().stack?.trim()?.split('\n').slice(-2).join('\n')) + '\n'
+      // const stackMsg = isPrintFullStack ? new Error().stack : (new Error().stack?.trim()?.split('\n').slice(-2).join('\n')) + '\n'
+      const stackMsg = this.handleStackTrace(new Error().stack, isPrintFullStack)
       if (stackMsg) {
         let stackLines = stackMsg.split('\n')
         stackLines.forEach((line, index) => {
@@ -113,8 +127,6 @@ export class HilogAdapter implements ILogAdapter{
    * @param args
    */
   log(level: hilog.LogLevel, tag: string, msg: string, ...args: ObjectOrNull[]): void {
-    // msg = this.formatMsg(msg, this.SINGLE_DIVIDER.length + 20)
-
   }
 
   /**

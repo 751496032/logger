@@ -3,7 +3,7 @@
  * @date: 2024/12/18
  * @desc:
  */
-import { LogConfig } from "logger";
+import { LogConfig } from "@hzw/logger";
 
 export namespace LogConfigs {
 

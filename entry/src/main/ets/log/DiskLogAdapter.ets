@@ -1,5 +1,5 @@
-import { ILogAdapter } from "logger";
-import { ObjectOrNull } from "logger/src/main/ets/common/Types";
+import { ILogAdapter } from "@hzw/logger";
+import { ObjectOrNull } from "@hzw/logger/src/main/ets/common/Types";
 import hilog from "@ohos.hilog";
 
 /**

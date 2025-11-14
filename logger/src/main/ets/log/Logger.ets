@@ -10,6 +10,7 @@ import { ILogAdapter } from './ILogAdapter'
 import { ObjectOrNull } from '../common/Types'
 import { LogPrinterProxy } from './LogPrinterProxy'
 import { ObjectUtil } from '../common/ObjectUtil'
+import { LRUCache } from '../common/LRUCache'
 
 
 export class Logger {
@@ -17,11 +18,12 @@ export class Logger {
   }
 
   private static printer = new LogPrinter()
+  private static printerProxys = new LRUCache<string, LogPrinterProxy>(20)
 
   /**
    * 初始化日志配置
    * @param config
-   * @deprecated 请使用initialize方法
+   * @deprecated 请使用initialize方法 或者 getLogger方法
    */
   static init(config: LogConfig) {
     LogPrinter.globalConfig = config
@@ -131,11 +133,15 @@ export class Logger {
    * @param cb
    * @returns
    */
-  static getLogger(tag: string, cb?: (config: LogConfig) => void) {
+  static getLogger(tag: string, cb?: (config: LogConfig) => void): LogPrinterProxy {
     let config = ObjectUtil.deepCopy(LogPrinter.globalConfig) as LogConfig
     cb?.(config)
     config.tag = tag
-    const proxy = new LogPrinterProxy(Logger.printer, config)
+    let proxy = Logger.printerProxys.get(tag)
+    if (!proxy) {
+      proxy = new LogPrinterProxy(Logger.printer, config)
+    }
+    Logger.printerProxys.set(tag, proxy)
     return proxy
   }
 
