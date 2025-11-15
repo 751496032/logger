@@ -4,22 +4,25 @@
  * @desc:
  */
 import { ObjectOrNull } from "../common/Types"
-import { IBasePrinter, IPrinter } from "./IPrinter"
+import { ILogPrinter } from "./IPrinter"
 import { LogConfig, mergeConfig } from "./LogConfig"
-import { Logger } from "./Logger"
 import { LogPrinter } from "./LogPrinter"
 
 
-export class LogPrinterProxy implements IBasePrinter {
+export class LogPrinterProxy implements ILogPrinter {
   private printer: LogPrinter
   private _config: LogConfig = {} as LogConfig
 
-  constructor(printer: LogPrinter, config: LogConfig) {
+  private constructor(printer: LogPrinter, config: LogConfig) {
     this.printer = printer
     this._config = config
   }
 
-  get config(): LogConfig {
+  static create(printer: LogPrinter, config: LogConfig): ILogPrinter {
+    return new LogPrinterProxy(printer, config)
+  }
+
+  private get config(): LogConfig {
     return mergeConfig(this._config)
   }
 

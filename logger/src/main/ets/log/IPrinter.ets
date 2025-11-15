@@ -6,7 +6,7 @@
 import { ObjectOrNull } from '../common/Types'
 import { LogConfig } from './LogConfig'
 
-export interface IPrinter extends IBasePrinter {
+export interface IPrinter extends ILogPrinter {
 
   dt(tag: string, ...args: ObjectOrNull[]): void
 
@@ -34,7 +34,7 @@ export interface IPrinter extends IBasePrinter {
 
 }
 
-export interface IBasePrinter {
+export interface ILogPrinter {
 
   d(...args: ObjectOrNull[]): void
 

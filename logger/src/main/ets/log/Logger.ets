@@ -8,9 +8,10 @@ import { LogPrinter } from './LogPrinter'
 import { HilogAdapter } from './HilogAdapter'
 import { ILogAdapter } from './ILogAdapter'
 import { ObjectOrNull } from '../common/Types'
-import { LogPrinterProxy } from './LogPrinterProxy'
 import { ObjectUtil } from '../common/ObjectUtil'
 import { LRUCache } from '../common/LRUCache'
+import { ILogPrinter } from './IPrinter'
+import { LogPrinterProxy } from './LogPrinterProxy'
 
 
 export class Logger {
@@ -18,7 +19,7 @@ export class Logger {
   }
 
   private static printer = new LogPrinter()
-  private static printerProxys = new LRUCache<string, LogPrinterProxy>(20)
+  private static printerProxys = new LRUCache<string, ILogPrinter>(20)
 
   /**
    * 初始化日志配置
@@ -191,14 +192,14 @@ export class Logger {
    * @param cb
    * @returns
    */
-  static getLogger(tag: string, cb?: (config: LogConfig) => void): LogPrinterProxy {
+  static getLogger(tag: string, cb?: (config: LogConfig) => void): ILogPrinter {
     let config = ObjectUtil.deepCopy(LogPrinter.globalConfig) as LogConfig
     cb?.(config)
     config.tag = tag
     config = mergeConfig(config)
     let proxy = Logger.printerProxys.get(tag)
     if (!proxy) {
-      proxy = new LogPrinterProxy(Logger.printer, config)
+      proxy = LogPrinterProxy.create(Logger.printer, config)
     }
     Logger.printerProxys.set(tag, proxy)
     return proxy
@@ -206,7 +207,7 @@ export class Logger {
 
 }
 
-export function getLogger(tag: string, cb?: (config: LogConfig) => void): LogPrinterProxy {
+export function getLogger(tag: string, cb?: (config: LogConfig) => void): ILogPrinter {
   return Logger.getLogger(tag, cb)
 }
 
